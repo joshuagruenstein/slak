@@ -2,8 +2,13 @@ from slacker import Slacker
 from threading import Thread
 import time, readline, sys
 import struct, fcntl, termios
+import os
 
-slack = Slacker('xoxp-9885641827-13134927984-63631444180-69a5d4ffa9')
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+with open(os.path.join(__location__, 'token'), 'r') as token:
+    slack = Slacker(token.read().replace('\n', ''))
 
 getMessages = None
 sendMessage = None
