@@ -54,6 +54,7 @@ def poll(slack, getter):
             for name, num in unread.items():
                 if num == 1: print("1 new message from " + name)
                 else: print(str(num) + " new messages from " + name)
+                term.beep()
 def help():
     print("- Use -l to list channels and users.")
     print("- Chat with somebody like \"slak mntruell\", or \"slak general\".")

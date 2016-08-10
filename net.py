@@ -1,7 +1,10 @@
 import term
+import threading
+import time
 
 getMessages = None
 sendMessage = None
+markRead    = None
 channels    = None
 groups      = None
 imChannels  = None
@@ -27,17 +30,19 @@ def initFields(slack):
 
 
 def initReadWrite(slack, name):
-    global getMessages, sendMessage
+    global getMessages, sendMessage, markRead
 
     for channel in channels:
         if channel['name'] == name:
             correctChannel = channel['id']
+            markRead = lambda x: mark(slack,correctChannel,x,"CHANNEL")
             getMessages = lambda x: slack.channels.history(correctChannel,oldest=x).body['messages']
             sendMessage = lambda x: slack.chat.post_message(correctChannel,x,as_user=True)
 
     for group in groups:
         if group['name'] == name:
             correctGroup = group['id']
+            markRead = lambda x: mark(slack,correctGroup,x,"GROUP")
             getMessages = lambda x: slack.groups.history(correctGroup,oldest=x).body['messages']
             sendMessage = lambda x: slack.chat.post_message(correctGroup,x,as_user=True)
 
@@ -45,6 +50,7 @@ def initReadWrite(slack, name):
         for user in userRaw:
             if user['id'] == channel['user'] and user['name'] == name:
                 correctIM = channel['id']
+                markRead = lambda x: mark(slack,correctIM,x,"IM")
                 getMessages = lambda x: slack.im.history(correctIM,oldest=x).body['messages']
                 sendMessage = lambda x: slack.chat.post_message(correctIM,x,as_user=True)
 
@@ -96,3 +102,20 @@ def unread(slack,getter,progress=False):
             term.progress(totalScanned, totalToScan)
 
     return unread
+
+
+lastMarked = 0
+def mark(slack, channel, ts, channelType):
+    global lastMarked
+
+    if time.time()-lastMarked < 5:
+        return
+
+    lastMarked = time.time()
+
+    if channelType == "CHANNEL":
+        slack.channel.mark(channel,ts)
+    elif channelType == "GROUP":
+        slack.group.mark(channel,ts)
+    else:
+        slack.im.mark(channel,ts)

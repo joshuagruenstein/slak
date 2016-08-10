@@ -44,6 +44,8 @@ def updateThread():
         val = term.printMessages(net.getMessages(lastRead), net.users, printMe=(lastRead==0))
         if val != None: lastRead = val
 
+        net.markRead(lastRead)
+
         term.resetPrompt()
         time.sleep(0.5)
 

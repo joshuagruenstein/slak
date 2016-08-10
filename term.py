@@ -42,3 +42,7 @@ def printMessages(messages, users, printMe=False):
         retVal = message['ts']
 
     return retVal
+
+def beep():
+    sys.stdout.write('\007')
+    sys.stdout.flush()
