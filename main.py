@@ -11,7 +11,7 @@ if sys.argv[1] == "-h":
     flags.help()
 elif sys.argv[1] == "-u":
     flags.update()
-elif sys.argv[1] == "-p":
+elif sys.argv[1] == "-a":
     if len(sys.argv) < 3:
         print("No presence provided.")
         sys.exit()
@@ -23,8 +23,9 @@ if sys.argv[1] == "-l":
     flags.list(sys.argv, net.channels, net.groups, net.imChannels,
                slack.users.list().body['members'])
 elif sys.argv[1] == "-n":
-    flags.unread(slack,slacker.BaseAPI(token=authToken),
-                 net.channels,net.groups,net.imChannels,net.users)
+    flags.unread(slack,slacker.BaseAPI(token=authToken))
+elif sys.argv[1] == "-p":
+    flags.poll(slack,slacker.BaseAPI(token=authToken))
 
 net.initReadWrite(slack,sys.argv[1])
 

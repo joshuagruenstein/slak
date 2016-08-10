@@ -1,4 +1,4 @@
-import os, term, util
+import os, term, util, net
 
 def list(args, channels, groups, imChannels, users):
     if len(args) == 2 or args[2] == "users":
@@ -29,47 +29,8 @@ def presence(slack, presence):
 
     os._exit(0)
 
-def unread(slack,getter,channels,groups,imChannels,users):
-    totalToScan = len(channels) + len(groups) + len(imChannels)
-    totalScanned = 0
-
-    unread = {}
-
-    for channel in channels:
-        unreads = slack.channels.info(channel['id']).body['channel']['unread_count']
-
-        if unreads != 0:
-            unread[channel['name']] = unreads
-
-        totalScanned += 1
-        term.progress(totalScanned, totalToScan)
-
-    for group in groups:
-        unreads = slack.groups.info(group['id']).body['group']['unread_count']
-
-        if unreads != 0:
-            unread[group['name']] = unreads
-
-        totalScanned += 1
-        term.progress(totalScanned, totalToScan)
-
-    for im in imChannels:
-        unreads = getter.get('im.history',
-            params={
-                "channel" : im['id'],
-                "count"   : 1,
-                "unreads" : 1
-            }
-        ).body['unread_count_display']
-
-        if im['user'] == "USLACKBOT":
-            continue
-
-        if unreads != 0:
-            unread[users[im['user']]] = unreads
-
-        totalScanned += 1
-        term.progress(totalScanned, totalToScan)
+def unread(slack,getter):
+    unread = net.unread(slack,getter,progress=True)
 
     print("\n")
 
@@ -85,6 +46,14 @@ def unread(slack,getter,channels,groups,imChannels,users):
 
     os._exit(0)
 
+def poll(slack, getter):
+    print("Polling... I'll let you know if you get anything.")
+    while True:
+        unread = net.unread(slack,getter)
+        if len(unread) > 0:
+            for name, num in unread.items():
+                if num == 1: print("1 new message from " + name)
+                else: print(str(num) + " new messages from " + name)
 def help():
     print("- Use -l to list channels and users.")
     print("- Chat with somebody like \"slak mntruell\", or \"slak general\".")

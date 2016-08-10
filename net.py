@@ -1,3 +1,5 @@
+import term
+
 getMessages = None
 sendMessage = None
 channels    = None
@@ -45,3 +47,52 @@ def initReadWrite(slack, name):
                 correctIM = channel['id']
                 getMessages = lambda x: slack.im.history(correctIM,oldest=x).body['messages']
                 sendMessage = lambda x: slack.chat.post_message(correctIM,x,as_user=True)
+
+def unread(slack,getter,progress=False):
+    totalToScan = len(channels) + len(groups) + len(imChannels)
+    totalScanned = 0
+
+    unread = {}
+
+    for channel in channels:
+        unreads = slack.channels.info(channel['id']).body['channel']['unread_count']
+
+        if unreads != 0:
+            unread[channel['name']] = unreads
+
+        totalScanned += 1
+        if progress:
+            term.progress(totalScanned, totalToScan)
+
+    for group in groups:
+        unreads = slack.groups.info(group['id']).body['group']['unread_count']
+
+        if unreads != 0:
+            unread[group['name']] = unreads
+
+        totalScanned += 1
+
+        if progress:
+            term.progress(totalScanned, totalToScan)
+
+    for im in imChannels:
+        unreads = getter.get('im.history',
+            params={
+                "channel" : im['id'],
+                "count"   : 1,
+                "unreads" : 1
+            }
+        ).body['unread_count_display']
+
+        if im['user'] == "USLACKBOT":
+            continue
+
+        if unreads != 0:
+            unread[users[im['user']]] = unreads
+
+        totalScanned += 1
+
+        if progress:
+            term.progress(totalScanned, totalToScan)
+
+    return unread
