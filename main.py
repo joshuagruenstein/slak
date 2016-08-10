@@ -9,6 +9,8 @@ slack = slacker.Slacker(authToken)
 
 if sys.argv[1] == "-h":
     flags.help()
+elif sys.argv[1] == "-u":
+    flags.update()
 elif sys.argv[1] == "-p":
     if len(sys.argv) < 3:
         print("No presence provided.")
@@ -22,7 +24,7 @@ if sys.argv[1] == "-l":
                slack.users.list().body['members'])
 elif sys.argv[1] == "-n":
     flags.unread(slack,slacker.BaseAPI(token=authToken),
-                 net.channels,net.groups,net.imChannels)
+                 net.channels,net.groups,net.imChannels,net.users)
 
 net.initReadWrite(slack,sys.argv[1])
 

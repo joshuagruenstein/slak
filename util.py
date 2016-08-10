@@ -1,11 +1,14 @@
 import os, sys
 
-def getToken():
-    __location__ = os.path.realpath(
-        os.path.join(os.getcwd(), os.path.dirname(__file__)))
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+def getToken():
     with open(os.path.join(__location__, 'token'), 'r') as token:
         return token.read().replace('\n', '')
+
+def gitPull():
+    return os.system("git -C " + os.path.dirname(sys.argv[0]) + " pull")
 
 def transformMsg(message):
     temp = message
