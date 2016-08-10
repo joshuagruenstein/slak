@@ -52,9 +52,14 @@ def poll(slack, getter):
         unread = net.unread(slack,getter)
         if len(unread) > 0:
             for name, num in unread.items():
-                if num == 1: print("1 new message from " + name)
-                else: print(str(num) + " new messages from " + name)
+                if num == 1:
+                    print("1 new message from " + name)
+                    util.notify("1 new message from " + name)
+                else:
+                    print(str(num) + " new messages from " + name)
+                    util.notify(str(num) + " new messages from " + name)
                 term.beep()
+
 def help():
     print("- Use -l to list channels and users.")
     print("- Chat with somebody like \"slak mntruell\", or \"slak general\".")

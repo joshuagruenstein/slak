@@ -19,3 +19,7 @@ def transformMsg(message):
     temp = temp.replace(":shrug:","¯\_(ツ)_/¯")
 
     return temp
+
+def notify(title,message):
+    if sys.platform == "darwin":
+        os.system("osascript -e 'display notification \"" + message + "\" with title \"Slak Notification\"'")

@@ -38,6 +38,7 @@ def initReadWrite(slack, name):
             markRead = lambda x: mark(slack,correctChannel,x,"CHANNEL")
             getMessages = lambda x: slack.channels.history(correctChannel,oldest=x).body['messages']
             sendMessage = lambda x: slack.chat.post_message(correctChannel,x,as_user=True)
+            return True
 
     for group in groups:
         if group['name'] == name:
@@ -45,6 +46,7 @@ def initReadWrite(slack, name):
             markRead = lambda x: mark(slack,correctGroup,x,"GROUP")
             getMessages = lambda x: slack.groups.history(correctGroup,oldest=x).body['messages']
             sendMessage = lambda x: slack.chat.post_message(correctGroup,x,as_user=True)
+            return True
 
     for channel in imChannels:
         for user in userRaw:
@@ -53,6 +55,9 @@ def initReadWrite(slack, name):
                 markRead = lambda x: mark(slack,correctIM,x,"IM")
                 getMessages = lambda x: slack.im.history(correctIM,oldest=x).body['messages']
                 sendMessage = lambda x: slack.chat.post_message(correctIM,x,as_user=True)
+                return True
+
+    return False
 
 def unread(slack,getter,progress=False):
     totalToScan = len(channels) + len(groups) + len(imChannels)

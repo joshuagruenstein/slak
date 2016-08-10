@@ -27,9 +27,7 @@ elif sys.argv[1] == "-n":
 elif sys.argv[1] == "-p":
     flags.poll(slack,slacker.BaseAPI(token=authToken))
 
-net.initReadWrite(slack,sys.argv[1])
-
-if not net.sendMessage:
+if not net.initReadWrite(slack,sys.argv[1]):
     print("Invalid input. Get help with \"slak -h\".")
     sys.exit()
 
@@ -40,8 +38,9 @@ def updateThread():
 
     while True:
         term.resetTermLine()
+        val = term.printMessages(net.getMessages(lastRead),
+                                 net.users, printMe=(lastRead==0))
 
-        val = term.printMessages(net.getMessages(lastRead), net.users, printMe=(lastRead==0))
         if val != None: lastRead = val
 
         net.markRead(lastRead)
@@ -53,9 +52,7 @@ thread = Thread(target=updateThread)
 thread.start()
 
 while True:
-    message = input()
-
-    message = util.transformMsg(message)
+    message = util.transformMsg(input())
 
     if len(message) > 0:
         net.sendMessage(message)
