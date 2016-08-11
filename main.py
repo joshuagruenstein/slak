@@ -31,6 +31,10 @@ if not net.initReadWrite(slack,sys.argv[1]):
     print("Invalid input. Get help with \"slak -h\".")
     sys.exit()
 
+if len(sys.argv) > 2:
+    net.sendMessage(util.transformMsg(" ".join(sys.argv[2:])))
+    sys.exit()
+
 lastRead = 0
 
 def updateThread():
