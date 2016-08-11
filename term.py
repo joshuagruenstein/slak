@@ -1,4 +1,4 @@
-import sys, struct, fcntl, termios, readline
+import sys, struct, fcntl, termios, readline, shutil
 
 def resetPrompt():
     sys.stdout.write("\033[93m {}\033[00m".format("Me: ") + readline.get_line_buffer())
@@ -20,7 +20,8 @@ def printMessage(message,user=False):
         print("\r" + "\033[91m {}\033[00m".format(user+": ") + message)
 
 def progress(count, total, suffix=''):
-    bar_len = 30
+    bar_len = shutil.get_terminal_size((80, 20))[0] - 9
+
     filled_len = int(round(bar_len * count / float(total)))
 
     percents = round(100.0 * count / float(total), 1)

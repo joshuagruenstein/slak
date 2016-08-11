@@ -48,9 +48,10 @@ def unread(slack,getter):
 
 def poll(slack, getter):
     print("Polling... I'll let you know if you get anything.")
+    lastUnread = {}
     while True:
         unread = net.unread(slack,getter)
-        if len(unread) > 0:
+        if len(unread) > 0 and unread != lastUnread:
             for name, num in unread.items():
                 if num == 1:
                     print("1 new message from " + name)
@@ -59,6 +60,7 @@ def poll(slack, getter):
                     print(str(num) + " new messages from " + name)
                     util.notify(str(num) + " new messages from " + name)
                 term.beep()
+            lastUnread = unread.copy()
 
 def help():
     print("- Use -l to list channels and users.")

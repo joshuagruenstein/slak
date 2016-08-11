@@ -13,13 +13,13 @@ def gitPull():
 def transformMsg(message):
     temp = message
 
-    if r"/exit" in message:
+    if r"/exit" in message or r":q" in message:
         os._exit(0)
 
     temp = temp.replace(":shrug:","¯\_(ツ)_/¯")
 
     return temp
 
-def notify(title,message):
+def notify(message):
     if sys.platform == "darwin":
         os.system("osascript -e 'display notification \"" + message + "\" with title \"Slak Notification\"'")

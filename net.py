@@ -96,6 +96,7 @@ def unread(slack,getter,progress=False):
         ).body['unread_count_display']
 
         if im['user'] == "USLACKBOT":
+            totalScanned += 1
             continue
 
         if unreads != 0:
@@ -119,8 +120,8 @@ def mark(slack, channel, ts, channelType):
     lastMarked = time.time()
 
     if channelType == "CHANNEL":
-        slack.channel.mark(channel,ts)
+        slack.channels.mark(channel,ts)
     elif channelType == "GROUP":
-        slack.group.mark(channel,ts)
+        slack.groups.mark(channel,ts)
     else:
         slack.im.mark(channel,ts)
